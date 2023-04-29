@@ -42,3 +42,34 @@ app.get('/api/private', checkJwt, (req, res) => {
 app.listen(port, () => {
     console.log(`server started at http://localhost:${ port }`);
 });
+
+//peridoically query ArenaNet gw2 api for information
+const requestAnetEmitter = new EventEmitter(); // instantiate an emitter
+const requestResults = requestAnetResults(requestAnetEmitter);
+let socketConnections = 0;
+
+const io = require('socket.io')(app);
+io.on('connection', () => { 
+    socketConnections += 1;
+
+    if (socketConnections === 1) {
+        requestResults('start');
+    }
+
+    // listen for events
+    requestAnetEmitter.on('update', (ret) => {
+        // if (!(ret.serverId in lastEquipmentUpdate)) {
+        //   lastEquipmentUpdate[ret.serverId] = null;
+        // }
+        // lastEquipmentUpdate[ret.serverId] = ret;
+    
+        io.emit('update_' + ret._id, ret);
+    });
+    
+    io.on('disconnect', () => {
+        socketConnections = Math.max(0, socketConnections - 1);
+        if (socketConnections < 1) {
+            requestResults('stop');
+        }
+    });
+});
