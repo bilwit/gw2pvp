@@ -1,14 +1,15 @@
 import { Schema, connection } from "mongoose";
 
 const schema = new Schema({
-  user_id: {
+  user_ref: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
   },
-  match_id: {
-    type: String,
-    require: true,
+  match_ref: {
+    type: Schema.Types.ObjectId,
+    ref: 'Match',
+    required: true,
   },
   map_id: {
     type: String,

@@ -41,19 +41,89 @@ export const requestAnet = (emitter: { emit: (arg0: string, arg1: any) => void; 
             //   }
             // ]
 
+            // process match results
             for (const game of gameResults) {
-              var query = {},
-              update = { expire: new Date() },
-              options = { upsert: true, new: true, setDefaultsOnInsert: true };
+              try {
+                // check if a document for this match with the user reference exists in db
+                let foundMatchId;
+                const foundMatch = await Match.findOne({
+                  match_id: game.match_id,
+                  players: { $in: [user._id] },
+                }).lean();
 
-              // Create PlayerMatch document
+                // if no document is found then create a new one or update the existing one
+                if (!foundMatch) {
+                  try {
+                    const newMatch = await Match.updateOne(
+                      { match_id: game.match_id },
+                      { 
+                        $setOnInsert: { 
+                          players: [user._id],
+                          started: game.started,
+                          ended: game.ended,
+                        },
+                        $addToSet: { players: user._id }
+                      },
+                      { upsert: true },
+                   ).lean();
 
-              // Upsert Match document
-              // Match.findOneAndUpdate(query, update, options, (error, result) => {
-              //     if (error) return;
+                   if (newMatch) {
+                    foundMatchId = newMatch._id;
+                   }
+                  } catch (er) {
+                    console.error('Unable to create new match document');
+                  }
+                } else {
+                  foundMatchId = foundMatch._id;
+                }
 
-              //     // do something with the document
-              // })
+                // check if a document for this playermatch exists
+                if (foundMatchId) {
+                  const foundPlayerMatch = await PlayerMatch.findOne({
+                    user_ref: user._id,
+                    match_ref: foundMatchId,
+                  }).lean();
+  
+                  // if no document is founds then create a new one
+                  if (!foundPlayerMatch) {
+                    const newPlayerMatch = new PlayerMatch({
+                      user_ref: user._id,
+                      match_ref: foundMatchId,
+                      map_id: game.map_id,
+                      started: game.started,
+                      ended: game.ended,
+                      result: game.result,
+                      team: game.team,
+                      profession: game.profession,
+                      scores: game.scores,
+                      rating_type: game.rating_type,
+                      rating_change: game.rating_change,
+                      season: game.season,
+                    });
+                    const savedNewPlayerMatch = await newPlayerMatch.save();
+  
+                    if (savedNewPlayerMatch) {
+                      try {
+                        const returnNewMatchInfo = await PlayerMatch.findOne({ _id: savedNewPlayerMatch._id }).populate({
+                          path: 'match_ref.players',
+                          select: 'name',
+                        }).lean();
+                        
+                        if (returnNewMatchInfo) {
+                          emitter.emit('update', { 
+                            user_id: user._id,
+                            new_match: returnNewMatchInfo,
+                          });
+                        }
+                      } catch {
+                        console.error('Could not find new match reference');
+                      }
+                    }
+                  }
+                }
+              } catch (e) {
+                console.error('Unable to create new playermatch document');
+              }
             } 
 
           } catch (err) {

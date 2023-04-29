@@ -9,7 +9,15 @@ const schema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
-  }]
+  }],
+  started: {
+    type: String,
+    require: true,
+  },
+  ended: {
+    type: String,
+    require: true,
+  },
 })
 
 export const Match = connection.model("Match", schema);
