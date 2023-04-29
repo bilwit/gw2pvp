@@ -1,4 +1,6 @@
 import { User } from '../models/User';
+import { Match } from '../models/Match';
+import { PlayerMatch } from '../models/PlayerMatch';
 import client from 'gw2api-client';
 
 export const requestAnet = (emitter: { emit: (arg0: string, arg1: any) => void; }) => {
@@ -38,6 +40,22 @@ export const requestAnet = (emitter: { emit: (arg0: string, arg1: any) => void; 
             //     "season" : "49CCE661-9DCC-473B-B106-666FE9942721"
             //   }
             // ]
+
+            for (const game of gameResults) {
+              var query = {},
+              update = { expire: new Date() },
+              options = { upsert: true, new: true, setDefaultsOnInsert: true };
+
+              // Create PlayerMatch document
+
+              // Upsert Match document
+              // Match.findOneAndUpdate(query, update, options, (error, result) => {
+              //     if (error) return;
+
+              //     // do something with the document
+              // })
+            } 
+
           } catch (err) {
             null;
           }
