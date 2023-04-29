@@ -2,26 +2,43 @@ import express from 'express';
 import mongoose from 'mongoose';
 import EventEmitter from 'events';
 import { auth } from 'express-oauth2-jwt-bearer';
-// import cookieParser from 'cookie-parser';
+import * as dotenv from 'dotenv'; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 8080; // default port to listen
 
-const jwtCheck = auth({
+const db = 'mongodb://gw2pvp-database:27018/ssp';
+mongoose
+  .connect(db)
+  .then(() => console.log('MongoDB Connected...'))
+  .catch((err) => console.log(err));
+
+
+const checkJwt = auth({
     audience: process.env.AUDIENCE,
     issuerBaseURL: process.env.ISSUER_BASE_URL,
     tokenSigningAlg: 'RS256'
   });
 
 // enforce on all endpoints
-app.use(jwtCheck);
+app.use(checkJwt);
 
-// define a route handler for the default home page
-app.get( '/', ( req, res ) => {
-    res.send( 'Hello world!' );
-} );
+// This route doesn't need authentication
+app.get('/api/public', (req, res) => {
+    res.json({
+        message: 'Hello from a public endpoint! You don\'t need to be authenticated to see this.'
+    });
+});
+
+// This route needs authentication
+app.get('/api/private', checkJwt, (req, res) => {
+    res.json({
+        message: 'Hello from a private endpoint! You need to be authenticated to see this.'
+    });
+});
 
 // start the Express server
-app.listen( port, () => {
-    console.log( `server started at http://localhost:${ port }` );
-} );
+app.listen(port, () => {
+    console.log(`server started at http://localhost:${ port }`);
+});
