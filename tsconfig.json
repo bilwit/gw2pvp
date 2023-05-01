@@ -17,5 +17,8 @@
   "include": [
       "src/**/*",
       "decs.d.ts"
+  ],
+  "exclude": [
+    "client/*"
   ]
 }

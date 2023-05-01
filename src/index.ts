@@ -6,6 +6,9 @@ import * as dotenv from 'dotenv'; // see https://github.com/motdotla/dotenv#how-
 import { requestAnet } from './services/requestAnet';
 import cors from 'cors';
 import { userRouter } from './routes/user';
+import { Server } from 'socket.io';
+import { createServer } from 'http';
+import { auth } from 'express-oauth2-jwt-bearer';
 
 // load .env variables
 dotenv.config();
@@ -20,6 +23,13 @@ mongoose
 // start express backend server
 const app = express();
 const port = process.env.PORT || 8080; // default port to listen
+
+app.use(
+    auth({
+        audience: process.env.AUDIENCE,
+        issuerBaseURL: process.env.ISSUER_BASE_URL,
+    })
+);
 
 app.set("json spaces", 2);
 app.use(
@@ -68,14 +78,16 @@ const requestAnetEmitter = new EventEmitter(); // instantiate an emitter
 const requestAnetWrapper = requestAnet(requestAnetEmitter);
 requestAnetWrapper('start');
 
-const io = require('socket.io')(app);
-io.on('connection', () => { 
+const httpServer = createServer(app);
+const io = new Server(httpServer, { cors: { origin: '*' } });
+
+io.on('connection', () => {
     // listen for events
     requestAnetEmitter.on('update', (ret) => {
         io.emit(ret.user_id, ret);
     });
-    
+
     io.on('disconnect', () => {
-        null;
+        console.log('disconnect');
     });
 });

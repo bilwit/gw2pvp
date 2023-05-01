@@ -5,10 +5,10 @@ import client from 'gw2api-client';
 
 export const requestAnet = (emitter: { emit: (arg0: string, arg1: any) => void; }) => {
   // store interval
-  let isTimerActive = false;
+  const isTimerActive = false;
 
   // response handler
-  const requestApi = async () => { 
+  const requestApi = async () => {
     try {
       // get list of users
       const usersList = await User.find().select('_id apiKey').lean();
@@ -56,8 +56,8 @@ export const requestAnet = (emitter: { emit: (arg0: string, arg1: any) => void; 
                   try {
                     const newMatch = await Match.updateOne(
                       { match_id: game.match_id },
-                      { 
-                        $setOnInsert: { 
+                      {
+                        $setOnInsert: {
                           players: [user._id],
                           started: new Date(game.started),
                           ended: new Date(game.ended),
@@ -83,7 +83,7 @@ export const requestAnet = (emitter: { emit: (arg0: string, arg1: any) => void; 
                     user_ref: user._id,
                     match_ref: foundMatchId,
                   }).lean();
-  
+
                   // if no document is founds then create a new one
                   if (!foundPlayerMatch) {
                     const newPlayerMatch = new PlayerMatch({
@@ -101,16 +101,16 @@ export const requestAnet = (emitter: { emit: (arg0: string, arg1: any) => void; 
                       season: game.season,
                     });
                     const savedNewPlayerMatch = await newPlayerMatch.save();
-  
+
                     if (savedNewPlayerMatch) {
                       try {
                         const returnNewMatchInfo = await PlayerMatch.findOne({ _id: savedNewPlayerMatch._id }).populate({
                           path: 'match_ref.players',
                           select: 'name',
                         }).lean();
-                        
+
                         if (returnNewMatchInfo) {
-                          emitter.emit('update', { 
+                          emitter.emit('update', {
                             user_id: user._id,
                             new_match: returnNewMatchInfo,
                           });
@@ -124,10 +124,10 @@ export const requestAnet = (emitter: { emit: (arg0: string, arg1: any) => void; 
               } catch (e) {
                 console.error('Unable to create new playermatch document');
               }
-            } 
+            }
 
           } catch (err) {
-            null;
+            console.log(err);
           }
 
           emitter.emit('update', { stuff: true });
@@ -141,23 +141,25 @@ export const requestAnet = (emitter: { emit: (arg0: string, arg1: any) => void; 
   };
 
   return async (action: string) => {
-    let timer = setInterval(() => { null });
+    // let timer = setInterval(() => {
+    //   console.log('start interval')
+    //  });
 
-    if (action === 'start') {
-      if (isTimerActive === false) {
-        // immediately request info and start the timer afterward
-        requestApi();
-        timer = setInterval(() => {
-          requestApi();
-        }, 30*60*60); // every 30 minutes
-        isTimerActive = true;
-      }
-    }
-    
-    if (action === 'stop') {
-      // stop timer (no connections)
-      clearInterval(timer);
-      isTimerActive = false;
-    }
+    // if (action === 'start') {
+    //   if (isTimerActive === false) {
+    //     // immediately request info and start the timer afterward
+    //     requestApi();
+    //     timer = setInterval(() => {
+    //       requestApi();
+    //     }, 30*60*60); // every 30 minutes
+    //     isTimerActive = true;
+    //   }
+    // }
+
+    // if (action === 'stop') {
+    //   // stop timer (no connections)
+    //   clearInterval(timer);
+    //   isTimerActive = false;
+    // }
   };
 };
