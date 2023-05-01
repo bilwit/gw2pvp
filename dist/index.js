@@ -78,9 +78,7 @@ app.use((req, res, next) => {
     res.contentType("application/json; charset=utf-8");
     next();
 });
-const apiRouter = express_1.default.Router();
-app.use("/api", apiRouter);
-user_1.userRouter.use("/user", user_1.userRouter);
+app.use("/api/user", user_1.userRouter);
 // start the Express server (HTTP)
 app.listen(port, () => {
     console.log(`server started at http://localhost:${port}`);

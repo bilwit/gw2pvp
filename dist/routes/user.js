@@ -17,7 +17,8 @@ const express_1 = __importDefault(require("express"));
 // import { validateJwt } from '../services/validateJwt';
 exports.userRouter = express_1.default.Router();
 // /api/user
-exports.userRouter.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.userRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('here');
     console.log(req.auth.payload);
 }));
 //# sourceMappingURL=user.js.map

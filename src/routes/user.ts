@@ -5,6 +5,7 @@ import { User } from '../models/User';
 export const userRouter = express.Router();
 
 // /api/user
-userRouter.post('/', async (req, res) => {
+userRouter.get('/', async (req, res) => {
+  console.log('here');
   console.log(req.auth.payload);
 });

@@ -41,7 +41,7 @@ function useGetPlayerMatches(): {
 
       try {
         const result = await fetch(
-          '/user',
+          '/api/user',
           { method: 'GET' },
         );
 

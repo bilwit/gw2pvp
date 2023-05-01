@@ -64,9 +64,7 @@ app.use((req, res, next) => {
     next();
 });
 
-const apiRouter = express.Router();
-app.use("/api", apiRouter);
-userRouter.use("/user", userRouter);
+app.use("/api/user", userRouter);
 
 // start the Express server (HTTP)
 app.listen(port, () => {
