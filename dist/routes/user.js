@@ -20,5 +20,8 @@ exports.userRouter = express_1.default.Router();
 exports.userRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('here');
     console.log(req.auth.payload);
+    res.status(200).json({
+        msg: 'hello',
+    });
 }));
 //# sourceMappingURL=user.js.map

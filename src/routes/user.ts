@@ -8,4 +8,7 @@ export const userRouter = express.Router();
 userRouter.get('/', async (req, res) => {
   console.log('here');
   console.log(req.auth.payload);
+  res.status(200).json({
+    msg: 'hello',
+  })
 });
