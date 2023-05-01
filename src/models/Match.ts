@@ -11,11 +11,11 @@ const schema = new Schema({
     required: true,
   }],
   started: {
-    type: String,
+    type: Date,
     require: true,
   },
   ended: {
-    type: String,
+    type: Date,
     require: true,
   },
 })

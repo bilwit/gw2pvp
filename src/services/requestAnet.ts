@@ -59,8 +59,8 @@ export const requestAnet = (emitter: { emit: (arg0: string, arg1: any) => void; 
                       { 
                         $setOnInsert: { 
                           players: [user._id],
-                          started: game.started,
-                          ended: game.ended,
+                          started: new Date(game.started),
+                          ended: new Date(game.ended),
                         },
                         $addToSet: { players: user._id }
                       },
@@ -90,8 +90,8 @@ export const requestAnet = (emitter: { emit: (arg0: string, arg1: any) => void; 
                       user_ref: user._id,
                       match_ref: foundMatchId,
                       map_id: game.map_id,
-                      started: game.started,
-                      ended: game.ended,
+                      started: new Date(game.started),
+                      ended: new Date(game.ended),
                       result: game.result,
                       team: game.team,
                       profession: game.profession,

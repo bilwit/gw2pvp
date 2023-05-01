@@ -5,7 +5,7 @@ import helmet from 'helmet';
 import * as dotenv from 'dotenv'; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 import { requestAnet } from './services/requestAnet';
 import cors from 'cors';
-import { authRouter } from './routes/auth';
+import { userRouter } from './routes/user';
 
 // load .env variables
 dotenv.config();
@@ -56,7 +56,7 @@ app.use((req, res, next) => {
 
 const apiRouter = express.Router();
 app.use("/api", apiRouter);
-apiRouter.use("/auth", authRouter);
+userRouter.use("/user", userRouter);
 
 // start the Express server (HTTP)
 app.listen(port, () => {
