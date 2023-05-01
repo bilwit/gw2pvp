@@ -14,7 +14,7 @@ import { auth } from 'express-oauth2-jwt-bearer';
 dotenv.config();
 
 // start mongo database
-const db = 'mongodb://gw2pvp-database:27018/gw2pvp';
+const db = 'mongodb://gw2pvp-database:27017/gw2pvp';
 mongoose
   .connect(db)
   .then(() => console.log('MongoDB Connected...'))

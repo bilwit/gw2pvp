@@ -40,7 +40,7 @@ const express_oauth2_jwt_bearer_1 = require("express-oauth2-jwt-bearer");
 // load .env variables
 dotenv.config();
 // start mongo database
-const db = 'mongodb://gw2pvp-database:27018/ssp';
+const db = 'mongodb://gw2pvp-database:27017/gw2pvp';
 mongoose_1.default
     .connect(db)
     .then(() => console.log('MongoDB Connected...'))
