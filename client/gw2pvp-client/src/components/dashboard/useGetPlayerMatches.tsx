@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import socketIOClient from 'socket.io-client';
+// import socketIOClient from 'socket.io-client';
 
 const ENDPOINT = '/';
 
-function useGetPlayerMatches(playerId: string): { 
+function useGetPlayerMatches(): { 
   data: {},
   error: string, 
 } {
@@ -52,7 +52,7 @@ function useGetPlayerMatches(playerId: string): {
 
     }
 
-    if (playerId) {
+    if (true) {
       wrapDispatch();
     }
 
