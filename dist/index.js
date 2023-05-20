@@ -39,6 +39,9 @@ const http_1 = require("http");
 const express_oauth2_jwt_bearer_1 = require("express-oauth2-jwt-bearer");
 // load .env variables
 dotenv.config();
+if (!(process.env.PORT && process.env.CLIENT_ORIGIN_URL)) {
+    throw new Error("Missing required environment variables. Check docs for more info.");
+}
 // start mongo database
 const db = 'mongodb://gw2pvp-database:27017/gw2pvp';
 mongoose_1.default
@@ -47,7 +50,8 @@ mongoose_1.default
     .catch((err) => console.log(err));
 // start express backend server
 const app = (0, express_1.default)();
-const port = process.env.PORT || 8080; // default port to listen
+const PORT = parseInt(process.env.PORT, 10) || 8080; // default port to listen
+const CLIENT_ORIGIN_URL = process.env.CLIENT_ORIGIN_URL;
 app.use((0, express_oauth2_jwt_bearer_1.auth)({
     audience: process.env.AUDIENCE,
     issuerBaseURL: process.env.ISSUER_BASE_URL,
@@ -69,7 +73,7 @@ app.use((0, helmet_1.default)({
     },
 }));
 app.use((0, cors_1.default)({
-    // origin: CLIENT_ORIGIN_URL,
+    origin: CLIENT_ORIGIN_URL,
     methods: ["GET"],
     allowedHeaders: ["Authorization", "Content-Type"],
     maxAge: 86400,
@@ -80,8 +84,8 @@ app.use((req, res, next) => {
 });
 app.use("/api/user", user_1.userRouter);
 // start the Express server (HTTP)
-app.listen(port, () => {
-    console.log(`server started at http://localhost:${port}`);
+app.listen(PORT, () => {
+    console.log(`server started at http://localhost:${PORT}`);
 });
 // peridoically query ArenaNet gw2 api for match information
 const requestAnetEmitter = new events_1.default(); // instantiate an emitter

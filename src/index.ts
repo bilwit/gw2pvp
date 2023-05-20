@@ -13,6 +13,12 @@ import { auth } from 'express-oauth2-jwt-bearer';
 // load .env variables
 dotenv.config();
 
+if (!(process.env.PORT && process.env.CLIENT_ORIGIN_URL)) {
+  throw new Error(
+    "Missing required environment variables. Check docs for more info."
+  );
+}
+
 // start mongo database
 const db = 'mongodb://gw2pvp-database:27017/gw2pvp';
 mongoose
@@ -22,7 +28,9 @@ mongoose
 
 // start express backend server
 const app = express();
-const port = process.env.PORT || 8080; // default port to listen
+const PORT = parseInt(process.env.PORT, 10) || 8080; // default port to listen
+
+const CLIENT_ORIGIN_URL = process.env.CLIENT_ORIGIN_URL;
 
 app.use(
     auth({
@@ -51,12 +59,12 @@ app.use(
 );
 
 app.use(
-    cors({
-        // origin: CLIENT_ORIGIN_URL,
-        methods: ["GET"],
-        allowedHeaders: ["Authorization", "Content-Type"],
-        maxAge: 86400,
-    })
+  cors({
+    origin: CLIENT_ORIGIN_URL,
+    methods: ["GET"],
+    allowedHeaders: ["Authorization", "Content-Type"],
+    maxAge: 86400,
+  })
 );
 
 app.use((req, res, next) => {
@@ -67,8 +75,8 @@ app.use((req, res, next) => {
 app.use("/api/user", userRouter);
 
 // start the Express server (HTTP)
-app.listen(port, () => {
-    console.log(`server started at http://localhost:${ port }`);
+app.listen(PORT, () => {
+    console.log(`server started at http://localhost:${ PORT }`);
 });
 
 // peridoically query ArenaNet gw2 api for match information
