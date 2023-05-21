@@ -10,14 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@auth0/auth0-react": "github:auth0/auth0-react",
+    "@auth0/auth0-react": "^2.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.11.1",
     "socket.io-client": "^4.6.1"
   },
   "devDependencies": {
-    "@types/auth0": "^3.3.2",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
